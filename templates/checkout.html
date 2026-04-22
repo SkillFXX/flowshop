@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-md mx-auto mt-10">
+  <div class="card bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body">
+      <h2 class="card-title text-2xl font-bold mb-6">Passer à la caisse</h2>
+
+      <form action="{{ url_for('checkout') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {% if user %}
+        <div class="alert alert-info shadow-none mb-6 text-sm">
+          <span class="material-icons opacity-70">info</span>
+          <div>
+            Vous êtes connecté en tant que
+            <strong>{{ user.first_name }}</strong> ({{ user.email }}). Nous
+            utiliserons ces informations pour traiter votre commande.
+          </div>
+        </div>
+        {% else %}
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text">Prénom</span>
+          </label>
+          <input
+            type="text"
+            name="first_name"
+            placeholder="John"
+            class="input input-bordered w-full"
+            required
+          />
+        </div>
+
+        <div class="form-control mb-6">
+          <label class="label">
+            <span class="label-text">Adresse e-mail</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            placeholder="john@example.com"
+            class="input input-bordered w-full"
+            required
+          />
+          <label class="label">
+            <span class="label-text-alt text-base-content/60"
+              >Nous utiliserons cette adresse pour vous envoyer votre
+              reçu.</span
+            >
+          </label>
+        </div>
+
+        <div class="alert alert-info shadow-none mb-6 text-sm">
+          <span class="material-icons opacity-70">info</span>
+          Votre compte sera créé automatiquement après l'achat.
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Passer au paiement
+          <span class="material-icons ml-2">payment</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

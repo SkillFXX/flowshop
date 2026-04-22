@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% from 'components/macros.html' import product_card, badges, review_card %}
+
+{% block content %}
+
+{# ===== HERO ===== #}
+    <div class="max-w-2xl">
+      <h1 class="text-4xl lg:text-5xl font-extrabold leading-tight">
+        Des ressources <span class="text-primary">pro</span> pour vos montages vidéo
+      </h1>
+      <p class="py-5 text-base-content/70 text-lg leading-relaxed">
+        Presets Premiere Pro, templates MOGRT et ressources créatives - accessibles à tous les monteurs.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#products" class="btn btn-primary btn-lg">
+          <span class="material-icons">storefront</span>
+          Voir les produits
+        </a>
+        <a href="/category/1" class="btn btn-ghost btn-lg">
+          Parcourir les presets →
+        </a>
+      </div>
+
+      {# Stats rapides #}
+      <div class="stats stats-horizontal shadow mt-8 bg-base-100 text-sm">
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Clients satisfaits</div>
+          <div class="stat-value text-lg text-primary">{{ stats.total_users + 396 }}+</div>
+        </div>
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Note moyenne</div>
+          <div class="stat-value text-lg text-warning">{{ "%.1f" | format(stats.average_rating) }} ★</div>
+        </div>
+        <div class="stat py-3 px-4">
+          <div class="stat-title text-xs">Prix dès</div>
+          <div class="stat-value text-lg text-success">{{ "%.2f" | format(stats.lowest_price / 100) }} €</div>
+        </div>
+      </div>
+    </div>
+
+ 
+
+{# ===== BADGES DE RÉASSURANCE ===== #}
+
+{{ badges() }}
+
+
+{# ===== CATÉGORIES ===== #}
+<div class="mb-10">
+  <h2 class="text-xl font-bold mb-4">Parcourir par catégorie</h2>
+  <div class="flex flex-wrap gap-3">
+    {% for category in categories %}
+    <a href="/category/{{ category.id }}" class="btn btn-outline gap-2">
+      {{ category.name }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+
+{# ===== PRODUITS ===== #}
+<div id="products" class="flex justify-between items-center mb-6">
+  <h2 class="text-2xl font-bold">Derniers produits</h2>
+  <span class="badge badge-neutral badge-outline">Nouveautés</span>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+  {% for product in products %}
+  {{ product_card(product) }}
+  {% else %}
+  <div class="col-span-full text-center py-10 text-base-content/60">
+    <span class="material-icons text-5xl mb-2">inventory_2</span>
+    <p>Aucun produit n'est encore disponible.</p>
+  </div>
+  {% endfor %}
+</div>
+
+{# ===== AVIS CLIENTS ===== #}
+<div class="divider mb-6">Ce que disent nos clients</div>
+
+<div class="overflow-hidden mb-12">
+  <style>
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .animate-scroll {
+      display: flex;
+      width: max-content;
+      animation: scroll 25s linear infinite;
+    }
+  </style>
+  <div class="flex gap-4 animate-scroll">
+    {% for i in range(2) %} 
+      {% for review in few_reviews %}
+        {{ review_card(review, display_product_name=True) }}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+
+{# ===== CTA FINAL ===== #}
+<div class="card bg-primary text-primary-content shadow-lg mb-4">
+  <div class="card-body flex-col md:flex-row items-center justify-between gap-4 py-8">
+    <div>
+      <h3 class="card-title text-2xl">Prêt à upgrader tes montages ?</h3>
+      <p class="opacity-80">Accès instantané après achat.</p>
+    </div>
+    <a href="{{ url_for('category', category_id=2) }}" class="btn btn-lg bg-white text-primary hover:bg-base-200 border-0 whitespace-nowrap">
+      Découvrir les MOGRT →
+    </a>
+  </div>
+</div>
+
+{% endblock %}

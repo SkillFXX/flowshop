@@ -1,0 +1,39 @@
+{% extends 'base.html' %} 
+
+{% block seo_title %}Vérification OTP - SkillFX Shop{% endblock %}
+{% block seo_description %}Entrez le code OTP envoyé à votre adresse e-mail pour vérifier votre connexion sur SkillFX Shop.{% endblock %}
+
+{% block content %}
+<div class="max-w-sm mx-auto mt-20">
+  <div class="card bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body">
+      <h2 class="card-title text-2xl font-bold justify-center mb-2">
+        Vérifier la connexion
+      </h2>
+      <p class="text-center text-sm text-base-content/70 mb-6">
+        Saisissez le code à 6 chiffres envoyé à {{ email }}
+      </p>
+
+      <form action="{{ url_for('otp_verify', email=email) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="email" value="{{ email }}" />
+        <div class="form-control mb-6">
+          <input
+            type="text"
+            name="otp"
+            placeholder="000000"
+            class="input input-bordered w-full text-center text-2xl tracking-[0.5em] font-mono"
+            maxlength="6"
+            required
+            autofocus
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Vérifier et se connecter
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

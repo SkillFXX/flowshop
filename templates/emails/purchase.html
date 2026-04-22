@@ -1,0 +1,51 @@
+<html>
+<body>
+    <h2>Merci pour votre achat !</h2>
+
+    <p>Bonjour,</p>
+    <p>Votre commande a été traitée avec succès.</p>
+
+    <h3>Détails de la commande:</h3>
+
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background-color:#f8f9fa;">
+                <th style="padding:10px; text-align:left;">Produit</th>
+                <th style="padding:10px; text-align:right;">Prix</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in order['items'] %}
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #ddd;">
+                    {{ item.title }}
+                </td>
+                <td style="padding:10px; border-bottom:1px solid #ddd; text-align:right;">
+                    €{{ "%.2f"|format(item.price_cents / 100) }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr style="background-color:#f8f9fa; font-weight:bold;">
+                <td style="padding:10px; text-align:right;">Total:</td>
+                <td style="padding:10px; text-align:right;">
+                    €{{ "%.2f"|format(order.total_price_cents / 100) }}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p>
+        Vous pouvez télécharger vos produits ici:
+        <a href="{{ url_for('purchases', _external=True) }}">Mes achats</a>
+    </p>
+
+    <p>Si vous avez des questions, contactez-nous à skillfx@proton.me</p>
+
+    <br>
+    <p>SkillFX Shop</p>
+</body>
+</html>

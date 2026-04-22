@@ -1,0 +1,38 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-sm mx-auto mt-20">
+  <div class="card bg-base-100 shadow-xl border border-base-200">
+    <div class="card-body">
+      <h2 class="card-title text-2xl font-bold justify-center mb-6">
+        Se connecter
+      </h2>
+
+      <form action="{{ url_for('login') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-control mb-6">
+          <label class="label">
+            <span class="label-text">Adresse e-mail</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Entrez l'adresse e-mail que vous avez utilisée pour l'achat"
+            class="input input-bordered w-full"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Envoyer le code
+          <span class="material-icons ml-2">send</span>
+        </button>
+      </form>
+
+      <div class="divider mt-6">Besoin d'un compte ?</div>
+      <p class="text-center text-sm text-base-content/70">
+        Un compte est automatiquement créé pour vous lorsque vous achetez un
+        article !
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% from 'components/macros.html' import product_card, badges, review_card %} {% extends 'base.html'
+%} {# ── SEO ── #} {% block seo_title %}{{ product.title }} – Effets & Presets
+pour Montage Vidéo | SkillFX Shop{% endblock %} {% block seo_description %}{{
+product.description[:152] }}...{% endblock %} {% block seo_image %}{{
+url_for('static', filename='uploads/images/' + product.images[0].image_path) if
+product.images else url_for('static', filename='default_product.png') }}{%
+endblock %} {% block content %}
+<div class="pb-cta">
+  <nav class="text-sm breadcrumbs mb-6 text-base-content/50">
+    <ul>
+      <li><a href="{{ url_for('index') }}">Accueil</a></li>
+      {% if product.category %}
+      <li>
+        <a href="{{ url_for('category', category_id=product.category.id) }}"
+          >{{ product.category.name }}</a
+        >
+      </li>
+      {% endif %}
+      <li class="text-base-content/80 font-medium truncate max-w-[180px]">
+        {{ product.title }}
+      </li>
+    </ul>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+<div class="flex gap-4 w-full">
+  
+  <!-- LEFT: main carousel -->
+  <div class="w-4/5">
+    {% if product.images %}
+    <style>
+      :target {
+        outline: 2px solid oklch(var(--p));
+      }
+      .carousel {
+        overflow-anchor: none;
+      }
+    </style>
+    <div class="carousel w-full rounded-box shadow-lg scroll-smooth h-[600px]">
+      
+      {% for img in product.images %}
+      <div id="slide{{ loop.index }}" class="carousel-item relative w-full flex items-center justify-center h-[600px]">
+        <img
+          src="{{ url_for('static', filename='uploads/images/' + img.image_path) }}"
+          class="w-full object-contain"
+        />
+
+        {% if product.images|length > 1 %}
+        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+          <a
+            href="#slide{{ loop.index - 1 if loop.index > 1 else product.images|length }}"
+            class="btn btn-circle btn-sm bg-white/50 border-none"
+          >❮</a>
+
+          <a
+            href="#slide{{ loop.index + 1 if loop.index < product.images|length else 1 }}"
+            class="btn btn-circle btn-sm bg-white/50 border-none"
+          >❯</a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      
+    </div>
+    {% else %}
+    <div class="aspect-video bg-base-300 flex items-center justify-center rounded-box">
+      <span class="material-icons text-6xl text-base-content/30">image</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: thumbnails -->
+  {% if product.images and product.images|length > 1 %}
+  <div class="w-1/5 flex flex-col gap-2 overflow-y-auto max-h-[500px] pr-1">
+
+    {% for img in product.images %}
+    <a href="#slide{{ loop.index }}" class="block">
+      <img
+        src="{{ url_for('static', filename='uploads/images/' + img.image_path) }}"
+        class="w-full aspect-square object-cover rounded-md border border-base-300 hover:border-primary transition"
+      />
+    </a>
+    {% endfor %}
+
+  </div>
+  {% endif %}
+
+</div>
+
+    {# ── Product info ── #}
+    <div class="reveal reveal-delay-1">
+      {# Category badge #} {% if product.category %}
+      <div
+        class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-secondary/10 text-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wide"
+      >
+        <span class="material-icons text-xs">label</span>
+        {{ product.category.name }}
+      </div>
+      {% endif %}
+
+      <h1 class="text-3xl lg:text-4xl font-extrabold leading-tight mb-3">
+        {{ product.title }}
+      </h1>
+
+      {# Rating summary #} {% if reviews %} {% set avg = (reviews |
+      sum(attribute='rating') / reviews|length) | round(1) %}
+      <div class="flex items-center gap-2 mb-4">
+        <div class="stars-avg flex gap-0.5 text-lg">
+          {% for i in range(1, 6) %}
+          <span
+            class="{% if i <= avg|int %}filled{% else %}empty{% endif %} material-icons text-base"
+          >
+            {% if i <= avg|int %}star{% elif i - avg < 1 %}star_half{% else
+            %}star_border{% endif %}
+          </span>
+          {% endfor %}
+        </div>
+        <span class="font-bold text-sm">{{ avg }}</span>
+        <span class="text-base-content/50 text-sm"
+          >({{ reviews|length }} avis)</span
+        >
+        <a
+          href="#reviews"
+          class="text-primary text-sm underline underline-offset-2 hover:opacity-75"
+          >Voir les avis</a
+        >
+      </div>
+      {% endif %} {# Price #}
+      <div class="flex items-baseline gap-3 mb-5">
+        <span class="text-4xl font-black text-primary"
+          >{{ product.formatted_price }}€</span
+        >
+      </div>
+
+      {# Description #}
+      <div class="prose prose-sm max-w-none mb-6 text-base-content/80">
+        <p>{{ product.description }}</p>
+      </div>
+
+      {# CTA #} {% if purchased %}
+      <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <button class="btn btn-disabled btn-lg flex-1" disabled>
+          <span class="material-icons mr-2">check_circle</span>
+          Déjà acheté
+        </button>
+        <a
+          href="{{ url_for('purchases') }}"
+          class="btn btn-outline btn-lg flex-1"
+        >
+          <span class="material-icons mr-2">download</span>
+          Mes téléchargements
+        </a>
+      </div>
+      {% elif in_cart %}
+      <a
+        href="{{ url_for('cart') }}"
+        class="btn btn-secondary btn-lg w-full sm:w-auto shadow-lg mb-6"
+      >
+        <span class="material-icons mr-2">shopping_cart</span>
+        Voir le panier
+      </a>
+      {% else %}
+      <form action="{{ url_for('cart') }}" method="POST" class="mb-6">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="product_id" value="{{ product.id }}" />
+        <button
+          class="btn btn-primary btn-lg w-full sm:w-auto shadow-lg hover:scale-105 transition-transform duration-200 text-base"
+        >
+          <span class="material-icons mr-2">shopping_cart</span>
+          Ajouter au panier
+        </button>
+      </form>
+
+      {% endif %} {# Trust badges #}
+      
+
+    </div>
+  </div>
+
+  {{ badges() }}
+
+  <div id="reviews" class="mt-16 reveal reveal-delay-2">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+      <span class="material-icons text-primary">reviews</span>
+      Avis clients {% if reviews %}<span class="badge badge-outline ml-2"
+        >{{ reviews|length }}</span
+      >{% endif %}
+    </h2>
+
+    {% if reviews %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      {% for review in reviews %}
+        {{ review_card(review=review, display_product_name=False) }}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-base-200/50 p-8 rounded-xl text-center mb-8">
+      <span class="material-icons text-4xl text-base-content/20 block mb-2"
+        >rate_review</span
+      >
+      <p class="text-base-content/50 italic">
+        Aucun avis pour ce produit. Soyez le premier !
+      </p>
+    </div>
+    {% endif %} {# Write review #} {% if session.get('user_id') and not
+    purchased %} {# Only purchased users can review – adjust condition to your
+    logic #} {% endif %} {% if session.get('user_id') %}
+    <div class="bg-base-100 border border-base-200 p-6 rounded-xl max-w-xl">
+      <h3 class="font-bold text-lg mb-4">Laisser un avis</h3>
+      <form
+        action="{{ url_for('product_review', product_id=product.id) }}"
+        method="POST"
+        class="space-y-4"
+      >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-control">
+          <label class="label pb-1"
+            ><span class="label-text font-medium">Note</span></label
+          >
+          <div class="rating rating-lg">
+            {% for v in [1,2,3,4,5] %}
+            <input
+              type="radio"
+              name="rating"
+              value="{{ v }}"
+              class="mask mask-star-2 bg-orange-400"
+              {% if v == 5 %}checked{% endif %}
+            />
+            {% endfor %}
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label pb-1"
+            ><span class="label-text font-medium">Commentaire</span></label
+          >
+          <textarea
+            name="comment"
+            class="textarea textarea-bordered h-24 resize-none"
+            placeholder="Partagez votre expérience avec ce produit..."
+            required
+          ></textarea>
+        </div>
+        <button class="btn btn-primary btn-sm px-6">Publier mon avis</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  {# ───────────────────────────────────────────────────────── FAQ
+  ───────────────────────────────────────────────────────── #}
+  <div class="mt-16">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+      <span class="material-icons text-primary">help_outline</span>
+      Questions fréquentes
+    </h2>
+
+    <div>
+      {% set faqs = [ ("Quels logiciels sont compatibles ?", "Les logiciels
+      compatibles sont inscrits dans la description du produit. Un fichier est
+      inclus avec les instructions d'utilisation détaillées."), ("Comment
+      recevoir mon fichier après l'achat ?", "Dès la confirmation du paiement,
+      vous aurez accès à votre espace client où vous pourrez télécharger votre
+      fichier."), ("Combien de fois puis-je télécharger le fichier ?", "Vous
+      disposez d'un accès illimité à votre achat : téléchargez autant de fois
+      que nécessaire, sans date d'expiration."), ("Puis-je utiliser ce produit
+      sur plusieurs projets ?", "Oui ! La licence incluse vous permet d'utiliser
+      ce produit sur un nombre illimité de projets personnels et commerciaux."),
+      ("Y a-t-il un remboursement possible ?", "En raison de la nature numérique
+      du produit, les remboursements ne sont pas possibles une fois le fichier
+      téléchargé. Si vous rencontrez un problème technique, notre support est là
+      pour vous aider.") ] %} {% for q, a in faqs %}
+      <details
+        class="collapse bg-base-100 border border-base-300 mt-2"
+        name="my-accordion-det-1"
+      >
+        <summary class="collapse-title font-semibold">{{ q }}</summary>
+        <div class="collapse-content text-sm">{{ a }}</div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ───────────────────────────────────────────────────────── SUGGESTED
+  PRODUCTS ───────────────────────────────────────────────────────── #} {% if
+  suggested_products %}
+  <div class="mt-16">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+      <span class="material-icons text-primary">auto_awesome</span>
+      Vous aimerez aussi
+    </h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      {% for sp in suggested_products[:4] %} {{ product_card(sp) }} {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{# /pb-cta #} {% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% from 'components/macros.html' import product_card %}
+
+{% block seo_title %}{{ category.name }} - SkillFX Shop{% endblock %}
+{% block seo_description %}Découvrez les produits de la catégorie {{ category.name }} sur SkillFX Shop.{% endblock %}
+
+{% block content %}
+<div class="hero bg-base-200 py-10 rounded-box mb-10">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <h1 class="text-5xl font-bold">{{ category.name }}</h1>
+      {% if category.description %}
+      <p class="py-6">{{ category.description }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if products %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {% for product in products %}
+  {{ product_card(product) }}
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-10">
+  <p class="text-lg text-base-content/60">Il n'y a pas encore de produits disponibles dans cette catégorie.</p>
+</div>
+{% endif %}
+{% endblock %}

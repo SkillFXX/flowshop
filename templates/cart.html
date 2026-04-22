@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block seo_title %}Votre panier - SkillFX Shop{% endblock %}
+{% block seo_description %}Découvrez les produits que vous avez ajoutés à votre panier sur SkillFX Shop. Finalisez votre achat en toute simplicité.{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold mb-8">Votre panier</h1>
+  
+  {% if products %}
+  <div class="bg-base-100 rounded-box shadow-lg p-6 mb-8">
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Prix</th>
+            <th>Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar">
+                  <div class="mask mask-squircle w-12 h-12">
+                    {% if product.images %}
+                    <img src="{{ url_for('static', filename='uploads/images/' + product.images[0].image_path) }}" alt="{{ product.title }}" />
+                    {% else %}
+                    <div class="bg-base-300 w-full h-full flex items-center justify-center">
+                      <span class="material-icons text-base-content/40 text-xs">image</span>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold">{{ product.title }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="font-bold">{{ product.formatted_price }}€</td>
+            <td>
+              <form action="{{ url_for('cart_remove', product_id=product.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button class="btn btn-ghost btn-sm text-error">
+                  <span class="material-icons">delete</span>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-6">
+      <div class="text-xl">
+        Total: <span class="text-2xl font-bold ml-2 text-primary">{{ "%.2f"|format(total) }}€</span>
+      </div>
+      <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-wide mt-4 sm:mt-0 shadow-md">Payer</a>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-16 bg-base-100 rounded-box shadow-sm border border-base-200">
+    <span class="material-icons text-6xl text-base-content/40 mb-4 inline-block">shopping_cart</span>
+    <h3 class="text-xl font-bold mb-2">Votre panier est vide</h3>
+    <p class="text-base-content/70 mb-6">On dirait que vous n'avez encore ajouté aucun produit numérique.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary shadow">Commencer vos achats</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="flex items-center justify-center bg-base-200 px-4">
+
+    <div class="card w-full max-w-md bg-base-100 shadow-xl">
+        
+        <div class="card-body text-center">
+
+            <!-- Badge erreur -->
+            <div class="flex justify-center mb-4">
+                <div class="badge badge-error badge-lg text-white px-4 py-3 text-lg">
+                    Erreur {{ code }}
+                </div>
+            </div>
+
+            <!-- Titre dynamique -->
+            <h1 class="text-3xl font-bold">
+                Oups !
+            </h1>
+
+            <!-- Message -->
+            <div class="mt-3 text-base-content/80">
+
+                {% if code == 404 %}
+                    <p>Page introuvable</p>
+
+                {% elif code == 500 %}
+                    <p>Erreur serveur</p>
+
+                {% elif code == 429 %}
+                    <p>Trop de requêtes, ralentis un peu <span class="material-icons">speed</span></p>
+
+                {% elif code == 400 %}
+                    <p>Page expirée</p>
+
+                {% else %}
+                    <p>Erreur inattendue</p>
+                {% endif %}
+
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions justify-center mt-6">
+                <a href="/" class="btn btn-primary">
+                    Retour à l’accueil
+                </a>
+
+                <button onclick="history.back()" class="btn btn-ghost">
+                    Retour
+                </button>
+            </div>
+
+            <p class="text-xs text-base-content/50 mt-6">
+                Si vous pensez que cette erreur ne devrait pas se produire, n’hésitez pas à nous contacter. E-mmail : <a href="mailto:skillfx@proton.me</a>" class="link link-primary">
+            </p>
+
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

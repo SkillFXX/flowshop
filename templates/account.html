@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block seo_title %}Mon compte - SkillFX Shop{% endblock %}
+{% block seo_description %}Consultez les détails de votre compte et gérez vos commandes sur SkillFX Shop.{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="mb-8 border-b pb-4 border-base-300">
+    <h1 class="text-3xl font-bold">Mon compte</h1>
+    <p class="text-base-content/70 mt-2">Consultez les détails de votre compte et gérez vos commandes.</p>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl border border-base-200 p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-sm uppercase tracking-wide text-base-content/50">Prénom</h2>
+        <p class="text-lg font-semibold mt-2">{{ user.first_name }}</p>
+      </div>
+      <div>
+        <h2 class="text-sm uppercase tracking-wide text-base-content/50">Adresse Email</h2>
+        <p class="text-lg font-semibold mt-2">{{ user.email }}</p>
+      </div>
+      <div class="sm:col-span-2">
+        <h2 class="text-sm uppercase tracking-wide text-base-content/50">Membre depuis</h2>
+        <p class="text-lg font-semibold mt-2">{{ user.created_at.strftime('%Y-%m-%d') }}</p>
+      </div>
+    </div>
+
+    <div class="divider mt-6"></div>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="{{ url_for('orders') }}" class="btn btn-primary">Consulter les commandes</a>
+      <a href="{{ url_for('purchases') }}" class="btn btn-outline">Mes achats</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

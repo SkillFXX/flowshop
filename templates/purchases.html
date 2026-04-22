@@ -1,0 +1,74 @@
+{% extends 'base.html' %} 
+
+{% block seo_title %}Mes achats - SkillFX Shop{% endblock %}
+{% block seo_description %}Consultez tous les produits numériques que vous avez achetés sur SkillFX Shop. Téléchargez-les à nouveau à tout moment.{% endblock %}
+
+{% from 'components/macros.html' import product_card
+%} {% block content %}
+<div class="mb-8 border-b pb-4 border-base-300">
+  <h1 class="text-3xl font-bold">Mes achats</h1>
+  <p class="text-base-content/70 mt-2">
+    Voici tous les produits numériques que vous avez achetés. Vous pouvez les
+    télécharger à nouveau à tout moment.
+  </p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {% for product in products %}
+  <div
+    class="card bg-base-100 shadow-xl overflow-hidden group border border-base-200"
+  >
+    <figure class="aspect-square bg-neutral-100 relative">
+      {% if product.images %}
+      <img
+        src="{{ url_for('static', filename='uploads/images/' + product.images[0].image_path) }}"
+        alt="{{ product.title }}"
+        class="w-full h-full object-cover"
+      />
+      {% else %}
+      <div
+        class="flex items-center justify-center w-full h-full bg-base-300 text-base-content"
+      >
+        <span class="material-icons text-5xl">image_not_supported</span>
+      </div>
+      {% endif %}
+    </figure>
+    <div class="card-body">
+      <h2 class="card-title">{{ product.title }}</h2>
+      <div class="card-actions mt-4">
+        {% if product.files %} {% for file in product.files %}
+        <a
+          href="{{ url_for('download', product_id=product.id) }}"
+          class="btn btn-primary btn-block"
+        >
+          <span class="material-icons mr-2">download</span>
+          Télécharger {{ file.filename }}
+        </a>
+        {% endfor %} {% else %}
+        <div class="alert alert-warning shadow-none text-sm">
+          <span class="material-icons">warning</span>
+          Aucun fichier disponible pour ce produit.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div
+    class="col-span-full text-center py-16 bg-base-100 rounded-box border border-base-200 shadow-sm mt-4"
+  >
+    <span
+      class="material-icons text-6xl mb-4 text-base-content/30 opacity-70 inline-block"
+      >inventory</span
+    >
+    <h3 class="text-xl font-bold mb-2">Aucun achat pour le moment</h3>
+    <p class="text-base-content/70">
+      Lorsque vous achetez des produits, ils apparaîtront ici.
+    </p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-6"
+      >Parcourir la boutique</a
+    >
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

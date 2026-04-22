@@ -1,0 +1,7 @@
+instance
+venv
+.env
+__pycache__
+*.pyc
+secure_uploads/
+static/uploads/

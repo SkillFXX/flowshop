@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="POST" class="max-w-sm mx-auto mt-20">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <h1 class="text-3xl font-bold mb-6 text-center">Admin Login</h1>
+    {% if error %}
+    <div class="alert alert-error mb-4">
+        <span class="material-icons">error</span>
+        {{ error }}
+    </div>
+    {% endif %}
+  <input type="password" name="password" placeholder="Mot de passe" class="input input-bordered w-full mb-4">
+  <button class="btn btn-primary w-full">Connexion</button>
+</form>
+{% endblock %}
