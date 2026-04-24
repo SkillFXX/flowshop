@@ -167,7 +167,7 @@ endblock %} {% block content %}
           class="btn btn-primary btn-lg w-full sm:w-auto shadow-lg hover:scale-105 transition-transform duration-200 text-base"
         >
           <span class="material-icons mr-2">shopping_cart</span>
-          Ajouter au panier
+          {% if product.price_cents|int == 0 %}Obtenir gratuitement{% else %}Ajouter au panier{% endif %}
         </button>
       </form>
 
