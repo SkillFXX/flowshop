@@ -584,15 +584,21 @@ def create_app(config_class=Config):
         session.pop('admin_logged_in', None)
         return redirect(url_for('index'))
 
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template("error.html", code=404, error=e), 404
+
+
+    @app.errorhandler(HTTPException)
+    def http_error(e):
+        return render_template("error.html", code=e.code, error=e), e.code
+
+
     @app.errorhandler(Exception)
-    def handle_errors(e):
+    def internal_error(e):
         app.logger.exception(
             f"Error on {request.method} {request.path} | IP: {request.remote_addr}"
         )
-        if isinstance(e, CSRFError):
-            return render_template("error.html", code=400, error=e), 400
-        if isinstance(e, HTTPException):
-            return render_template("error.html", code=e.code, error=e), e.code
         return render_template("error.html", code=500, error=e), 500
 
     return app
