@@ -31,6 +31,12 @@ class Product(db.Model):
     @property
     def formatted_price(self):
         return f"{self.price_cents / 100:.2f}"
+
+    @property
+    def avg_rating(self):
+        if not self.reviews:
+            return 0
+        return sum(r.rating for r in self.reviews) / len(self.reviews)
     
     def __repr__(self):
         return self.title

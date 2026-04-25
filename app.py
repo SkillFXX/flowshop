@@ -104,6 +104,62 @@ def create_app(config_class=Config):
             category_id=category_id, is_active=True).all()
         return render_template('category.html', category=category, products=products)
 
+    @app.route('/products')
+    def products():
+        # Get filter and sort parameters
+        category_id = request.args.get('category', type=int)
+        min_price = request.args.get('min_price', type=float, default=0)
+        max_price = request.args.get('max_price', type=float)
+        sort_by = request.args.get('sort', default='newest')
+        
+        # Build query
+        query = Product.query.filter_by(is_active=True)
+        
+        if category_id:
+            query = query.filter_by(category_id=category_id)
+        
+        if max_price:
+            max_price_cents = int(max_price * 100)
+            min_price_cents = int(min_price * 100)
+            query = query.filter(Product.price_cents >= min_price_cents, Product.price_cents <= max_price_cents)
+        else:
+            min_price_cents = int(min_price * 100)
+            query = query.filter(Product.price_cents >= min_price_cents)
+        
+        products_list = query.all()
+        
+        # Sort products
+        if sort_by == 'price_asc':
+            products_list.sort(key=lambda p: p.price_cents)
+        elif sort_by == 'price_desc':
+            products_list.sort(key=lambda p: p.price_cents, reverse=True)
+        elif sort_by == 'name_asc':
+            products_list.sort(key=lambda p: p.title.lower())
+        elif sort_by == 'rating_desc':
+            products_list.sort(key=lambda p: p.avg_rating, reverse=True)
+        elif sort_by == 'newest':
+            products_list.sort(key=lambda p: p.created_at, reverse=True)
+        
+        # Get all categories for filter
+        categories = Category.query.order_by(Category.name).all()
+        
+        # Calculate min and max prices for filter display
+        all_products = Product.query.filter_by(is_active=True).all()
+        min_product_price = min((p.price_cents for p in all_products), default=0) / 100
+        max_product_price = max((p.price_cents for p in all_products), default=0) / 100
+        
+        return render_template(
+            'products.html',
+            products=products_list,
+            categories=categories,
+            selected_category=category_id,
+            min_price=min_price,
+            max_price=max_price or max_product_price,
+            sort_by=sort_by,
+            min_product_price=min_product_price,
+            max_product_price=max_product_price
+        )
+
     @app.route('/cart', methods=['GET', 'POST'])
     def cart():
         current_user = get_current_user()

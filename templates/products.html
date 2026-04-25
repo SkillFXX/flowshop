@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% from 'components/macros.html' import product_card %}
+
+{% block seo_title %}Tous les Produits - SkillFX Shop{% endblock %}
+{% block seo_description %}Découvrez tous nos produits : presets, MOGRT, PSD et ressources pour vos montages vidéo.{% endblock %}
+
+{% block content %}
+<div class="hero bg-base-200 py-10 rounded-box mb-10">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <h1 class="text-5xl font-bold">Tous les Produits</h1>
+      <p class="py-6">Découvrez notre sélection complète d'effets, presets et ressources</p>
+    </div>
+  </div>
+</div>
+
+<nav class="text-sm breadcrumbs mt-10 text-base-content/50">
+  <ul>
+    <li><a href="{{ url_for('index') }}">Accueil</a></li>
+    <li>Tous les produits</li>
+  </ul>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <div class="lg:col-span-1">
+    <form method="GET" class="space-y-6">
+      <div class="card bg-base-100 p-4">
+        <h3 class="font-bold text-lg mb-4">Trier par</h3>
+        <select name="sort" class="select select-bordered w-full" onchange="this.form.submit()">
+          <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Plus récent</option>
+          <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Prix croissant</option>
+          <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Prix décroissant</option>
+          <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>Alphabétique</option>
+          <option value="rating_desc" {% if sort_by == 'rating_desc' %}selected{% endif %}>Mieux noté</option>
+        </select>
+      </div>
+
+      <div class="card bg-base-100 p-4">
+        <h3 class="font-bold text-lg mb-4">Catégories</h3>
+        <div class="space-y-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input 
+              type="radio" 
+              name="category" 
+              value="" 
+              class="radio radio-sm"
+              onchange="this.form.submit()"
+              {% if not selected_category %}checked{% endif %}
+            />
+            <span>Tous les produits</span>
+          </label>
+          {% for category in categories %}
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input 
+              type="radio" 
+              name="category" 
+              value="{{ category.id }}" 
+              class="radio radio-sm"
+              onchange="this.form.submit()"
+              {% if selected_category == category.id %}checked{% endif %}
+            />
+            <span>{{ category.name }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card bg-base-100 p-4">
+        <h3 class="font-bold text-lg mb-4">Prix (€)</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="label">
+              <span class="label-text text-sm">Min</span>
+            </label>
+            <input 
+              type="number" 
+              name="min_price" 
+              value="{{ min_price }}" 
+              min="0" 
+              max="{{ max_product_price }}" 
+              step="0.01"
+              placeholder="0"
+              class="input input-bordered input-sm w-full"
+            />
+          </div>
+          <div>
+            <label class="label">
+              <span class="label-text text-sm">Max</span>
+            </label>
+            <input 
+              type="number" 
+              name="max_price" 
+              value="{{ max_price }}" 
+              min="0" 
+              max="{{ max_product_price }}" 
+              step="0.01"
+              placeholder="{{ max_product_price }}"
+              class="input input-bordered input-sm w-full"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm w-full">
+            Filtrer
+          </button>
+          <a href="{{ url_for('products') }}" class="btn btn-ghost btn-sm w-full">
+            Réinitialiser
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="lg:col-span-3">
+    {% if products %}
+    <div class="mb-4">
+      <p class="text-sm text-base-content/70">
+        {{ products|length }} produit{{ 's' if products|length > 1 else '' }} trouvé{{ 's' if products|length > 1 else '' }}
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for product in products %}
+      <div class="relative">
+        {{ product_card(product) }}        
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+      <div class="mb-4">
+        <span class="material-icons text-6xl text-base-content/20">search_off</span>
+      </div>
+      <h2 class="text-2xl font-bold text-base-content/70 mb-2">Aucun produit trouvé</h2>
+      <p class="text-base-content/60 mb-6">
+        {% if selected_category or min_price > 0 or max_price < max_product_price %}
+        Essayez d'ajuster vos filtres pour trouver ce que vous recherchez.
+        {% else %}
+        Aucun produit n'est actuellement disponible.
+        {% endif %}
+      </p>
+      <a href="{{ url_for('products') }}" class="btn btn-primary">
+        Voir tous les produits
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
