@@ -12,11 +12,11 @@
         Presets Premiere Pro, templates MOGRT et ressources créatives - accessibles à tous les monteurs.
       </p>
       <div class="flex flex-wrap gap-3">
-        <a href="#products" class="btn btn-primary btn-lg">
+        <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
           <span class="material-icons">storefront</span>
           Voir les produits
         </a>
-        <a href="/category/1" class="btn btn-ghost btn-lg">
+        <a href="{{ url_for('category', category_id=1) }}" class="btn btn-ghost btn-lg">
           Parcourir les presets →
         </a>
       </div>
@@ -50,7 +50,7 @@
   <h2 class="text-xl font-bold mb-4">Parcourir par catégorie</h2>
   <div class="flex flex-wrap gap-3">
     {% for category in categories %}
-    <a href="/category/{{ category.id }}" class="btn btn-outline gap-2">
+    <a href="{{ url_for('category', category_id=category.id) }}" class="btn btn-outline gap-2">
       {{ category.name }}
     </a>
     {% endfor %}
@@ -61,7 +61,10 @@
 {# ===== PRODUITS ===== #}
 <div id="products" class="flex justify-between items-center mb-6">
   <h2 class="text-2xl font-bold">Derniers produits</h2>
-  <span class="badge badge-neutral badge-outline">Nouveautés</span>
+  <a href="{{ url_for('products') }}" class="btn btn-ghost">
+    Voir tout
+    <span class="material-icons ml-1">arrow_forward</span>
+  </a>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
