@@ -13,7 +13,7 @@ import hmac
 import requests
 from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, render_template, request, session, redirect, url_for, flash, send_file, abort, jsonify
+from flask import Flask, Response, render_template, request, session, redirect, url_for, flash, send_file, abort, jsonify
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -239,7 +239,7 @@ def create_app(config_class=Config):
                 email = current_user.email
                 first_name = current_user.first_name
             else:
-                email = request.form.get('email')
+                email = request.form.get('email').lower()
                 first_name = request.form.get('first_name')
 
             if User.query.filter_by(email=email).first() and not current_user:
@@ -315,7 +315,7 @@ def create_app(config_class=Config):
                 amount_total = session['amount_total']
 
                 customer_details = session['customer_details']
-                email = customer_details['email']
+                email = customer_details['email'].lower()
 
                 metadata = session['metadata'] or {}
                 first_name = metadata['first_name']
@@ -407,10 +407,10 @@ def create_app(config_class=Config):
     def login():
         print("Login route accessed.", file=sys.stderr)
         if request.method == 'POST':
-            email = request.form.get('email')
+            email = request.form.get('email').lower()
             user = User.query.filter_by(email=email).first()
             if not user:
-                flash('Account not found. Please purchase a product first.')
+                flash('Compte introuvable. Veuillez d\'abord acheter un produit.')
                 return redirect(url_for('login'))
 
             OTPLogin.query.filter_by(email=email).delete()
@@ -439,7 +439,7 @@ def create_app(config_class=Config):
         email = request.args.get('email')
         if request.method == 'POST':
             otp = request.form.get('otp')
-            email = request.form.get('email')
+            email = request.form.get('email').lower()
 
             otp_entry = OTPLogin.query.filter_by(
                 email=email).order_by(OTPLogin.id.desc()).first()
