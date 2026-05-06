@@ -1,51 +1,112 @@
 <html>
-<body>
+  <body>
     <h2>Merci pour votre achat !</h2>
 
-    <p>Bonjour,</p>
+    <p>Bonjour {{ order.user.first_name }},</p>
     <p>Votre commande a été traitée avec succès.</p>
+
+    <div
+      style="
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+      "
+    >
+      <p style="margin: 5px 0"><strong>Commande :</strong> #{{ order.id}}</p>
+      <p style="margin: 5px 0">
+        <strong>Date :</strong> {{ order.created_at.strftime('%d/%m/%Y') }}
+      </p>
+    </div>
 
     <h3>Détails de la commande:</h3>
 
-    <table style="width:100%; border-collapse:collapse;">
-        <thead>
-            <tr style="background-color:#f8f9fa;">
-                <th style="padding:10px; text-align:left;">Produit</th>
-                <th style="padding:10px; text-align:right;">Prix</th>
-            </tr>
-        </thead>
+    <table style="width: 100%; border-collapse: collapse">
+      <thead>
+        <tr style="background-color: #f8f9fa">
+          <th
+            style="
+              padding: 10px;
+              text-align: left;
+              border-bottom: 2px solid #ddd;
+            "
+          >
+            Produit
+          </th>
+          <th
+            style="
+              padding: 10px;
+              text-align: right;
+              border-bottom: 2px solid #ddd;
+            "
+          >
+            Prix
+          </th>
+        </tr>
+      </thead>
 
-        <tbody>
-            {% for item in order['items'] %}
-            <tr>
-                <td style="padding:10px; border-bottom:1px solid #ddd;">
-                    {{ item.title }}
-                </td>
-                <td style="padding:10px; border-bottom:1px solid #ddd; text-align:right;">
-                    €{{ "%.2f"|format(item.price_cents / 100) }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+      <tbody>
+        {% for item in order.items %}
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd">
+            {{ item.product.title }}
+          </td>
+          <td
+            style="
+              padding: 10px;
+              border-bottom: 1px solid #ddd;
+              text-align: right;
+            "
+          >
+            {{ "%.2f"|format(item.price_at_time_cents / 100) }}€
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
 
-        <tfoot>
-            <tr style="background-color:#f8f9fa; font-weight:bold;">
-                <td style="padding:10px; text-align:right;">Total:</td>
-                <td style="padding:10px; text-align:right;">
-                    €{{ "%.2f"|format(order.total_price_cents / 100) }}
-                </td>
-            </tr>
-        </tfoot>
+      <tfoot>
+        <tr style="font-weight: bold">
+          <td style="padding: 10px; text-align: right">Total TTC:</td>
+          <td style="padding: 10px; text-align: right">
+            {{ "%.2f"|format(order.total_price_cents / 100) }}€
+          </td>
+        </tr>
+      </tfoot>
     </table>
 
-    <p>
-        Vous pouvez télécharger vos produits ici:
-        <a href="{{ url_for('purchases', _external=True) }}">Mes achats</a>
+    <p style="margin-top: 20px">
+      Vous pouvez télécharger vos produits ici :
+      <a
+        href="{{ url_for('purchases', _external=True) }}"
+        style="color: #007bff; text-decoration: none; font-weight: bold"
+        >Mes achats</a
+      >
     </p>
 
     <p>Si vous avez des questions, contactez-nous à skillfx@proton.me</p>
 
-    <br>
+    {% if order.items %}
+    <div
+      style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px"
+    >
+      <h3>Votre avis nous intéresse</h3>
+      <p>Avez-vous aimé vos produits ?</p>
+      <a
+        href="{{ url_for('product', product_id=order.items[0].product.id, _external=True) }}"
+        style="
+          background-color: #28a745;
+          color: white;
+          padding: 10px 15px;
+          text-decoration: none;
+          border-radius: 5px;
+        "
+      >
+        Donner mon avis
+      </a>
+    </div>
+    {% endif %}
+
+    <br />
     <p>SkillFX Shop</p>
-</body>
+  </body>
 </html>

@@ -363,14 +363,8 @@ def create_app(config_class=Config):
                     return jsonify({'error': 'Database error'}), 500
 
                 try:
-                    items = []
-                    for p_id in product_ids:
-                        product = db.session.get(Product, int(p_id))
-                        if product:
-                            items.append(
-                                {'title': product.title, 'price_cents': product.price_cents})
-                    send_purchase_confirmation_email(
-                        email, {'items': items, 'total_price_cents': amount_total})
+                    order_data = db.session.get(Order, new_order.id)
+                    send_purchase_confirmation_email(email, order_data)
                 except Exception as e:
                     app.logger.error(f"Email error: {e}")
 
